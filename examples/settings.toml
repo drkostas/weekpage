@@ -1,0 +1,67 @@
+title = ["Weekly", "Log"]          # the second word is drawn in italic
+hours = [7, 22]                    # first and last hour row
+
+[work]
+weekdays = [0, 1, 2, 3, 4]         # Monday is 0
+core = [11, 17]                    # darker band
+flex = [[9, 11], [17, 18]]         # lighter band
+
+[walks]
+label = "Walk"
+count = 2
+icon = "paw"
+
+[[ticks]]
+name = "workout"
+icon = "dumbbell"
+colour = "#e87139"
+
+[[ticks]]
+name = "run"
+icon = "shoe"
+colour = "#6c3ec4"
+
+[[ticks]]
+name = "kite"
+icon = "kite"
+colour = "#1f6e8d"
+
+[[ticks]]
+name = "trip"
+icon = "mountain"
+colour = "#3f8f6a"
+
+[colours]
+page = "#f8f5ee"
+days = ["#1f6e8d", "#e87139", "#3f8f6a", "#6c3ec4", "#d9453b", "#f4c22f", "#2f8fb9"]
+work_core = "#dcebf2"
+work_flex = "#edf5f8"
+
+[art]                               # every picture is optional, paths are relative to this file
+banner = ""
+left = { image = "", caption = "" }
+right = { image = "", caption = "" }
+
+[wind]
+min_knots = 15                      # kiteable: at least this strength
+min_hours = 2                       # for at least this many daylight hours
+
+[[wind.spots]]
+label = "N"
+name = "North beach"
+lat = 38.73
+lon = -9.47
+wind_from = [300, 60]               # degrees, clockwise, the sector this spot works in
+
+[[wind.spots]]
+label = "S"
+name = "South beach"
+lat = 38.64
+lon = -9.24
+wind_from = [120, 240]
+
+[[calendars]]
+name = "home"
+ics = ""                            # a file path or an https link to an .ics
+me = []                             # your addresses, to drop events you declined
+skip = ["birthday"]                 # all-day titles containing these words are left out
