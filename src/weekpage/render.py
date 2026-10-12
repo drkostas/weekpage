@@ -42,7 +42,9 @@ def render_pdf(week: Week, s: Settings, out: Path) -> Path:
         browser = p.chromium.launch()
         page = browser.new_page()
         page.goto(html.as_uri())
-        page.evaluate("document.fonts.ready")
+        # every face, including the ones limited to a range of characters, which Chromium would
+        # otherwise load only after first use and so after the PDF is made
+        page.evaluate("Promise.all([...document.fonts].map(f => f.load())).then(() => document.fonts.ready)")
         page.pdf(path=str(out), width="297mm", height="210mm", print_background=True,
                  margin={"top": "0", "right": "0", "bottom": "0", "left": "0"}, prefer_css_page_size=True)
         browser.close()

@@ -52,3 +52,14 @@ def test_looks_like_the_approved_render(tmp_path, name):
     assert len(got) == len(want)
     diff = sum(abs(a - b) > 40 for a, b in zip(got, want)) / len(got)
     assert diff < 0.01, f"{name} differs from its golden image in {diff:.1%} of the bytes"
+
+
+def test_greek_and_cyrillic_use_a_mono_that_has_them(tmp_path):
+    from datetime import date
+    from weekpage.model import Item, Week
+    w = Week.empty(date(2026, 10, 19))
+    w.days[1].items.append(Item("17:00", "18:00", "Καλημέρα κόσμε", "given"))
+    w.days[2].items.append(Item("10:00", "11:00", "Встреча", "given"))
+    doc = fitz.open(render_pdf(w, S, tmp_path / "g.pdf"))
+    names = [f[3] for f in doc[0].get_fonts()]
+    assert any("FiraMono" in n for n in names) and not any("Times" in n for n in names)

@@ -2,6 +2,8 @@
 @font-face { font-family: "Display"; src: url("{{ fonts }}/InstrumentSerif-Regular.ttf") }
 @font-face { font-family: "Display"; font-style: italic; src: url("{{ fonts }}/InstrumentSerif-Italic.ttf") }
 @font-face { font-family: "Mono"; src: url("{{ fonts }}/IBMPlexMono-Regular.ttf") }
+/* Greek and Cyrillic, which IBM Plex Mono does not have */
+@font-face { font-family: "Mono"; src: url("{{ fonts }}/FiraMono-Regular.ttf"); unicode-range: U+0370-03FF, U+1F00-1FFF, U+0400-04FF }
 * { box-sizing: border-box; margin: 0; padding: 0 }
 html, body { width: 297mm; height: 210mm }
 body { background: var(--page); font-family: "Mono", monospace; color: #2b2b2b; position: relative; overflow: hidden;
