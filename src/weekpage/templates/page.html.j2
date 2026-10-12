@@ -1,0 +1,43 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>{{ week.title }}</title>
+<style>:root { --page: {{ s.colours.page }}; --core: {{ s.colours.work_core }}; --flex: {{ s.colours.work_flex }}; --hour: 5.2mm }
+{{ css | safe }}</style></head>
+<body>
+{{ icons | safe }}
+{% macro icon(name) %}<svg class="i{% if name == 'paw' %} i-fill{% endif %}"><use href="#i-{{ name }}"/></svg>{% endmacro %}
+<div class="abs title">{{ s.title[0] }} <em>{{ s.title[1] }}</em></div>
+<div class="abs legend">
+  {% for t in s.ticks %}<span style="color:{{ t.colour }}">{{ icon(t.icon) }} <span style="color:#2b2b2b">{{ t.name }}</span></span>{% endfor %}
+  {% if s.walks.count %}<span style="color:#9a5a22">{{ icon(s.walks.icon) }} <span style="color:#2b2b2b">{{ s.walks.label | lower }}</span></span>{% endif %}
+  <span><i class="sw" style="background:var(--flex)"></i><i class="sw" style="background:var(--core)"></i> work</span>
+</div>
+{% if pics.banner %}<img class="abs banner" src="{{ pics.banner }}">{% endif %}
+{% for r in rows[0] %}<div class="abs hours" style="top: calc(59.9mm + {{ loop.index0 }} * var(--hour) + 1.2mm)">{{ '%02d' % r.hour }}</div>{% endfor %}
+{% for day in week.days %}{% set i = loop.index0 %}
+<div class="abs col" style="left: {{ 18.1 + i * 38.5 }}mm; --day: {{ s.colours.days[i] }}; --name: {{ s.colours.names[i] }}">
+  <div class="bar"></div>
+  <div class="head"><span class="name">{{ day.date.strftime('%A') }}</span><span class="date">{{ day.date.strftime('%d/%m') }}</span></div>
+  {% set w = day.wind %}
+  <div class="wind{% if w and w.kiteable %} kiteable{% endif %}">
+    <div class="top">
+      <span class="kite">{{ icon('kite') }}</span>
+      <span class="bars">{% for k, h, c in [(15, 1.0, "#9cc3d8"), (20, 1.85, "#66a9c4"), (25, 2.7, "#3a7ba1"), (30, 3.55, "#245b7b"), (35, 4.4, "#163c52")] %}<span style="height: {{ h }}mm; --bar: {{ c }}" class="{% if w and w.knots >= k %}on{% endif %}"><i>{{ k }}{% if k == 35 %}+{% endif %}</i></span>{% endfor %}</span>
+      <span class="compass">{% for sp in (s.wind.spots or [{'label': 'N'}, {'label': 'S'}])[:2] %}<b class="{% if w and w.side == sp.label %}on{% endif %}">{{ sp.label }}</b>{% endfor %}</span>
+    </div>
+    <div class="sky">{% for k in ['sun', 'cloud', 'drizzle', 'rain'] %}<span class="{{ k }}{% if w and w.sky == k %} on{% endif %}">{{ icon(k) }}</span>{% endfor %}</div>
+  </div>
+  <div class="rows">
+    {% if day.off %}<div class="off">{{ day.off }}</div>{% endif %}
+    {% for r in rows[i] %}<div class="row {{ '' if day.off else (s.work.shade(day.date.weekday(), r.hour) or '') }}">
+      {% if r.more %}<span class="more">+{{ r.more }}</span>{% endif %}
+      {% for it in r.shown %}<div class="it"><b>{{ it.start }}</b> {{ it.title }}</div>{% endfor %}
+    </div>{% endfor %}
+  </div>
+  <div class="notes">NOTES{% for n in (day.notes + ['', '', ''])[:3] %}<div class="ln">{{ n }}</div>{% endfor %}</div>
+  {% if s.walks.count %}<div class="walks"><span style="color:#9a5a22">{{ icon(s.walks.icon) }}</span> {{ s.walks.label }}{% for _ in range(s.walks.count) %}<span class="box"></span>{% endfor %}</div>{% endif %}
+  <div class="ticks">{% for t in s.ticks %}<span style="color:{{ t.colour }}">{{ icon(t.icon) }}<span class="box"></span></span>{% endfor %}</div>
+</div>{% endfor %}
+<div class="abs week">NOTES FOR THE WEEK{% for n in (week.notes + ['', '', ''])[:3] %}<div class="ln">{{ n }}</div>{% endfor %}</div>
+{% if pics.left %}<div class="abs pic left"><img src="{{ pics.left }}">{{ s.art.left.caption }}</div>{% endif %}
+{% if pics.right %}<div class="abs pic right"><img src="{{ pics.right }}">{{ s.art.right.caption }}</div>{% endif %}
+</body></html>

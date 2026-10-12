@@ -1,0 +1,66 @@
+@page { size: 297mm 210mm; margin: 0 }
+@font-face { font-family: "Display"; src: url("{{ fonts }}/InstrumentSerif-Regular.ttf") }
+@font-face { font-family: "Display"; font-style: italic; src: url("{{ fonts }}/InstrumentSerif-Italic.ttf") }
+@font-face { font-family: "Mono"; src: url("{{ fonts }}/IBMPlexMono-Regular.ttf") }
+* { box-sizing: border-box; margin: 0; padding: 0 }
+html, body { width: 297mm; height: 210mm }
+body { background: var(--page); font-family: "Mono", monospace; color: #2b2b2b; position: relative; overflow: hidden;
+       -webkit-print-color-adjust: exact; print-color-adjust: exact }
+svg.i { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -0.12em }
+svg.i.i-fill { fill: currentColor; stroke: none }
+.abs { position: absolute }
+.title { left: 9mm; top: 8.4mm; font: 400 12.4mm/1 "Display"; letter-spacing: -0.3mm }
+.title em { color: #1f6e8d }
+.legend { left: 9mm; top: 24.3mm; font-size: 2.8mm; display: flex; gap: 2.6mm; align-items: center }
+.legend .sw { display: inline-block; width: 2.6mm; height: 2.6mm; border: 0.2mm solid #cfdde4; margin-right: 0.4mm }
+.banner { left: 173.3mm; top: 8.9mm; width: 113.4mm; height: 18.9mm; border-radius: 3mm; object-fit: cover }
+.hours { left: 9mm; width: 7mm; text-align: right; font-size: 2.9mm; color: #555 }
+.col { top: 31.1mm; width: 36.6mm; height: 140.9mm; background: #fff; border: 0.2mm solid #e2e8e8;
+       border-radius: 1.6mm; overflow: hidden }
+.col .bar { height: 1.2mm; background: var(--day) }
+.col .head { height: 7.7mm; padding: 1.6mm 2mm 0; display: flex; justify-content: space-between; align-items: baseline }
+.col .name { font: 400 5.5mm/1 "Display"; color: var(--name) }
+.col .date { font-size: 3mm; color: #444 }
+.wind { margin: 1.2mm 2mm 0; height: 17mm; border-radius: 1.2mm; background: #edf5f8; border: 0.2mm solid #d8e6ee; padding: 1.2mm 1.5mm }
+.wind .top { display: flex; align-items: flex-end; gap: 1.2mm; height: 4.6mm }
+.wind .kite { color: #1f6e8d; font-size: 5mm; stroke-width: 2.2 }
+.wind .bars { display: flex; align-items: flex-end; gap: 0.3mm }
+.wind .bars span { display: block; width: 2.9mm; border: 0.3mm solid var(--bar); border-radius: 0.4mm; background: #fff; position: relative }
+.wind .bars span.on { background: var(--bar) }
+.wind .bars i { position: absolute; top: 100%; left: -0.5mm; font: normal 2.1mm/1.4 "Mono"; color: #222 }
+.wind .compass { flex: none; margin-left: auto; align-self: flex-start; margin-top: -0.4mm; width: 7mm; height: 7mm; border-radius: 50%; border: 0.3mm solid #1f6e8d; overflow: hidden;
+                 display: grid; grid-template-rows: 1fr 1fr; font-size: 2.4mm; text-align: center; line-height: 3.5mm }
+.wind .compass b { font-weight: 400; color: #1f6e8d }
+.wind .compass b + b { background: #f7dccd; color: #c2502b }
+.wind .compass b.on { background: #1f6e8d; color: #fff }
+.wind .compass b + b.on { background: #c2502b; color: #fff }
+.wind .sky { display: flex; justify-content: space-between; margin-top: 5mm }
+.wind .sky span { width: 6.6mm; height: 5mm; border-radius: 1mm; border: 0.25mm solid #b7cfdb; background: #fff;
+                  display: grid; place-items: center; font-size: 4.2mm; color: #3d4950 }
+.wind .sky span.sun { color: #e39a14 }
+.wind .sky span.on { outline: 0.5mm solid var(--day) }
+.wind.kiteable { box-shadow: inset 0 0 0 0.5mm #3f8f6a }
+.rows { margin-top: 1.7mm; border-top: 0.25mm solid #d9d6cf }
+.row { height: var(--hour); border-bottom: 0.2mm solid #e4e1da; font-size: 2.1mm; line-height: 2.5mm; padding: 0.1mm 1mm; overflow: hidden }
+.row.core { background: var(--core) }
+.row.flex { background: var(--flex) }
+.row .it { white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.row .it b { font-weight: 400; color: var(--name) }
+.row .more { float: right; color: #888 }
+.rows { position: relative }
+.off { position: absolute; right: 1mm; top: 0.6mm; font: italic 400 3.2mm/1 "Display"; color: var(--name) }
+.notes { height: 14mm; margin: 0.8mm 2mm 0; border-top: 0.25mm solid #d9d6cf; font-size: 2.4mm; letter-spacing: 0.4mm; color: #666; padding-top: 1.4mm }
+.notes .ln { border-bottom: 0.25mm dotted #bbb; height: 3.5mm; letter-spacing: 0; color: #2b2b2b; font-size: 2.1mm; white-space: nowrap; overflow: hidden }
+.walks { margin: 2mm 2mm 0; height: 4.5mm; background: #f7efe4; border-radius: 1mm; display: flex; align-items: center; padding: 0 1.2mm;
+         font: italic 400 3.6mm/1 "Display"; color: #9a5a22; gap: 1mm }
+.walks .box { margin-left: auto } .walks .box + .box { margin-left: 1mm }
+.box { display: inline-block; width: 3mm; height: 3mm; border: 0.3mm solid #2b2b2b; border-radius: 0.5mm; background: #fff }
+.ticks { margin: 1.5mm 2mm 0; display: flex; justify-content: space-between; font-size: 3mm }
+.ticks span { display: flex; align-items: center; gap: 0.5mm }
+.week { left: 39.7mm; top: 176mm; width: 208.9mm; height: 24.7mm; background: #fff; border: 0.2mm solid #e2e8e8;
+        border-top: 1.2mm solid #216e8c; border-radius: 1.6mm; padding: 2mm 4mm; font-size: 2.6mm; letter-spacing: 0.5mm; color: #444 }
+.week .ln { border-bottom: 0.25mm dotted #bbb; height: 5.2mm; letter-spacing: 0; font-size: 2.6mm; color: #2b2b2b }
+.pic { text-align: center; font: italic 400 4.4mm/1.2 "Display" }
+.pic img { display: block; margin: 0 auto; max-width: 100%; max-height: 18mm }
+.pic.left { left: 12mm; top: 178.5mm; width: 22mm; color: #9a5a22 }
+.pic.right { left: 250mm; top: 177mm; width: 39mm; color: #6c3ec4 }
