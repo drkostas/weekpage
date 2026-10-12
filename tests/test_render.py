@@ -1,0 +1,54 @@
+from pathlib import Path
+
+import pymupdf as fitz
+import pytest
+from pypdf import PdfReader
+
+from weekpage.model import load_week
+from weekpage.render import render_html, render_pdf
+from weekpage.settings import load_settings
+
+ROOT = Path(__file__).parents[1]
+S = load_settings(ROOT / "examples" / "settings.toml")
+WEEKS = ROOT / "tests" / "data" / "weeks"
+GOLDEN = ROOT / "tests" / "data" / "golden"
+
+
+@pytest.mark.parametrize("name", ["empty", "busy", "holiday", "full_hour"])
+def test_one_a4_landscape_page_with_real_text(tmp_path, name):
+    out = render_pdf(load_week(WEEKS / f"{name}.json"), S, tmp_path / "w.pdf")
+    page = PdfReader(out).pages[0]
+    assert len(PdfReader(out).pages) == 1
+    assert (round(float(page.mediabox.width)), round(float(page.mediabox.height))) == (842, 595)
+    text = page.extract_text().replace(" ", "")      # letter-spaced labels come out as "N O T E S"
+    assert "Monday" in text and "Sunday" in text and "NOTESFORTHEWEEK" in text
+
+
+def test_items_holiday_and_overflow_are_on_the_page(tmp_path):
+    text = PdfReader(render_pdf(load_week(WEEKS / "holiday.json"), S, tmp_path / "h.pdf")).pages[0].extract_text()
+    assert "Public holiday" in text
+    text = PdfReader(render_pdf(load_week(WEEKS / "full_hour.json"), S, tmp_path / "f.pdf")).pages[0].extract_text()
+    assert "+2" in text
+
+
+def test_a_holiday_does_not_move_the_hour_rows(tmp_path):
+    from weekpage.render import render_html
+    import re
+    html = render_html(load_week(WEEKS / "holiday.json"), S)
+    assert html.index('class="rows"') < html.index('class="off"')     # the label sits inside the rows, positioned
+
+
+def test_text_is_vector_not_a_picture(tmp_path):
+    doc = fitz.open(render_pdf(load_week(WEEKS / "busy.json"), S, tmp_path / "b.pdf"))
+    assert doc[0].get_images() == []          # the example settings carry no pictures
+    assert len(doc[0].get_fonts()) >= 2       # the display serif and the mono
+
+
+@pytest.mark.parametrize("name", ["empty", "busy", "holiday", "full_hour"])
+def test_looks_like_the_approved_render(tmp_path, name):
+    doc = fitz.open(render_pdf(load_week(WEEKS / f"{name}.json"), S, tmp_path / "x.pdf"))
+    got = doc[0].get_pixmap(dpi=60).samples
+    want = fitz.Pixmap(str(GOLDEN / f"{name}.png")).samples
+    assert len(got) == len(want)
+    diff = sum(abs(a - b) > 40 for a, b in zip(got, want)) / len(got)
+    assert diff < 0.01, f"{name} differs from its golden image in {diff:.1%} of the bytes"

@@ -6,6 +6,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 DAY_COLOURS = ["#1f6e8d", "#e87139", "#3f8f6a", "#6c3ec4", "#d9453b", "#f4c22f", "#2f8fb9"]
+# the day names, darker where a bar colour is too light to read as text
+NAME_COLOURS = ["#1f6687", "#a8471d", "#2f6b4d", "#55309f", "#a8342c", "#826410", "#24688a"]
 
 
 @dataclass
@@ -40,6 +42,7 @@ class Walks:
 class Colours:
     page: str = "#f8f5ee"
     days: list[str] = field(default_factory=lambda: list(DAY_COLOURS))
+    names: list[str] = field(default_factory=lambda: list(NAME_COLOURS))
     work_core: str = "#dcebf2"
     work_flex: str = "#edf5f8"
 

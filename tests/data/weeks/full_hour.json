@@ -1,0 +1,80 @@
+{
+  "monday": "2026-10-19",
+  "days": [
+    {
+      "date": "2026-10-19",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-20",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-21",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-22",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-23",
+      "items": [
+        {
+          "start": "12:00",
+          "end": "12:30",
+          "title": "One",
+          "source": "given"
+        },
+        {
+          "start": "12:00",
+          "end": "12:30",
+          "title": "Two",
+          "source": "given"
+        },
+        {
+          "start": "12:00",
+          "end": "12:30",
+          "title": "Three",
+          "source": "given"
+        },
+        {
+          "start": "12:00",
+          "end": "12:30",
+          "title": "Four",
+          "source": "given"
+        }
+      ],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-24",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-25",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    }
+  ],
+  "notes": []
+}

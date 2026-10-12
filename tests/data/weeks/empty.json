@@ -1,0 +1,55 @@
+{
+  "monday": "2026-10-19",
+  "days": [
+    {
+      "date": "2026-10-19",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-20",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-21",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-22",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-23",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-24",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-25",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    }
+  ],
+  "notes": []
+}

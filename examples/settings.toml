@@ -34,6 +34,7 @@ colour = "#3f8f6a"
 [colours]
 page = "#f8f5ee"
 days = ["#1f6e8d", "#e87139", "#3f8f6a", "#6c3ec4", "#d9453b", "#f4c22f", "#2f8fb9"]
+names = ["#1f6687", "#a8471d", "#2f6b4d", "#55309f", "#a8342c", "#826410", "#24688a"]
 work_core = "#dcebf2"
 work_flex = "#edf5f8"
 

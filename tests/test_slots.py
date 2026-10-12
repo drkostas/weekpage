@@ -18,3 +18,8 @@ def test_more_than_two_shows_plus_n():
 def test_early_and_late_items_clamp_to_the_edge_rows():
     rows = place([I("06:00", "early"), I("23:00", "late")], (7, 22))
     assert rows[0].shown[0].title == "early" and rows[-1].shown[0].title == "late"
+
+
+def test_same_start_keeps_the_given_order():
+    rows = place([I("12:00", "z"), I("12:00", "a")], (7, 22))
+    assert [i.title for i in rows[5].shown] == ["z", "a"]

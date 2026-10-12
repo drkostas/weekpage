@@ -1,0 +1,62 @@
+{
+  "monday": "2026-10-26",
+  "days": [
+    {
+      "date": "2026-10-26",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-27",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-28",
+      "items": [
+        {
+          "start": "11:00",
+          "end": "13:00",
+          "title": "Parade",
+          "source": "given"
+        }
+      ],
+      "off": "Public holiday",
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-29",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-30",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-31",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-11-01",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    }
+  ],
+  "notes": []
+}

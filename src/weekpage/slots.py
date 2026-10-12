@@ -18,6 +18,6 @@ class Row:
 def place(items: list[Item], hours: tuple[int, int]) -> list[Row]:
     first, last = hours
     rows = {h: [] for h in range(first, last + 1)}
-    for it in sorted(items, key=lambda i: (i.start, i.title)):
+    for it in sorted(items, key=lambda i: i.start):          # same start: keep the given order
         rows[min(max(it.hour, first), last)].append(it)
     return [Row(h, xs[:PER_ROW], max(0, len(xs) - PER_ROW)) for h, xs in rows.items()]
