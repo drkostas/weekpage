@@ -78,8 +78,8 @@ A day in `off` has no work band and shows its name.
 - `weekpage.sources.screenshot.ScreenshotSource` reads a screenshot of a calendar's week view, for
   a calendar you cannot connect. It finds the day headers and hour labels and places each event by
   its position. Titles cut off in the picture keep their `...`, and days the picture does not show
-  are returned as warnings. It uses the text recognition built into macOS, so install it with
-  `pip install 'weekpage[macos]'`.
+  are returned as warnings. It uses the text recognition built into macOS, which is installed with the package on a Mac
+  and is not available elsewhere.
 - `weekpage.lines.parse_line("Wed 18:00-19:00 Physio", monday)` turns one line of text into an item.
 
 ## Writing a source

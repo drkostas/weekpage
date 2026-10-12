@@ -122,7 +122,7 @@ class ScreenshotSource:
         try:
             r = read_boxes(ocr(self.path), week.monday, self.source)
         except ImportError:
-            return ["reading a screenshot needs macOS and the 'macos' extra"]
+            return ["reading a screenshot needs macOS (its built-in text recognition)"]
         self.last = r
         for d, it in r.items:
             if (day := week.day(d)):
