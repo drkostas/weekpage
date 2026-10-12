@@ -1,0 +1,156 @@
+{
+  "monday": "2026-10-19",
+  "days": [
+    {
+      "date": "2026-10-19",
+      "items": [
+        {
+          "start": "08:30",
+          "end": "09:00",
+          "title": "Gym",
+          "source": "given"
+        },
+        {
+          "start": "10:00",
+          "end": "10:30",
+          "title": "Standup",
+          "source": "given"
+        },
+        {
+          "start": "15:00",
+          "end": "16:00",
+          "title": "Design review",
+          "source": "given"
+        }
+      ],
+      "off": null,
+      "notes": [],
+      "wind": {
+        "knots": 12,
+        "side": "N",
+        "kiteable": false,
+        "sky": "cloud",
+        "source": "forecast"
+      }
+    },
+    {
+      "date": "2026-10-20",
+      "items": [
+        {
+          "start": "10:00",
+          "end": "10:30",
+          "title": "Standup",
+          "source": "given"
+        },
+        {
+          "start": "12:00",
+          "end": "13:00",
+          "title": "Dentist",
+          "source": "given"
+        }
+      ],
+      "off": null,
+      "notes": [
+        "Pick up the parcel",
+        "Call the bank"
+      ],
+      "wind": null
+    },
+    {
+      "date": "2026-10-21",
+      "items": [
+        {
+          "start": "10:00",
+          "end": "10:30",
+          "title": "Standup",
+          "source": "given"
+        },
+        {
+          "start": "18:30",
+          "end": "19:30",
+          "title": "Call with the landlord",
+          "source": "given"
+        }
+      ],
+      "off": null,
+      "notes": [],
+      "wind": {
+        "knots": 24,
+        "side": "S",
+        "kiteable": true,
+        "sky": "rain",
+        "source": "forecast"
+      }
+    },
+    {
+      "date": "2026-10-22",
+      "items": [
+        {
+          "start": "10:00",
+          "end": "10:30",
+          "title": "Standup",
+          "source": "given"
+        },
+        {
+          "start": "13:00",
+          "end": "14:00",
+          "title": "Lunch with Ana",
+          "source": "given"
+        },
+        {
+          "start": "19:00",
+          "end": "20:00",
+          "title": "Run club",
+          "source": "given"
+        }
+      ],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-23",
+      "items": [
+        {
+          "start": "10:00",
+          "end": "10:30",
+          "title": "Standup",
+          "source": "given"
+        },
+        {
+          "start": "12:00",
+          "end": "13:00",
+          "title": "Weekly deep dive",
+          "source": "given"
+        }
+      ],
+      "off": null,
+      "notes": [],
+      "wind": null
+    },
+    {
+      "date": "2026-10-24",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": {
+        "knots": 31,
+        "side": "N",
+        "kiteable": true,
+        "sky": "sun",
+        "source": "forecast"
+      }
+    },
+    {
+      "date": "2026-10-25",
+      "items": [],
+      "off": null,
+      "notes": [],
+      "wind": null
+    }
+  ],
+  "notes": [
+    "Book the ferry for November",
+    "Renew the gym card"
+  ]
+}
