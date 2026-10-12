@@ -50,7 +50,8 @@ Start from [`examples/settings.toml`](examples/settings.toml). Each part is opti
 - `[wind]` sets what counts as a good day (`min_knots` for at least `min_hours` daylight hours)
   and your spots. Each spot has a label shown in the compass, coordinates and `wind_from`, the
   sector of wind directions it works with, in degrees clockwise from north (`[300, 60]` wraps
-  through north). On each day the spot whose sector matches the wind is the one shown.
+  through north). On each day the spot whose sector matches the wind is the one shown. Any other
+  key on a spot is kept in `spot.extra`, for a forecast source of your own to read.
 - `[[calendars]]` are `.ics` files or links (Google Calendar gives one under "Secret address in
   iCal format"). Events you declined (`me` lists your addresses), cancelled events and the same
   event seen twice are left out. All-day events go into the day's notes, except titles that

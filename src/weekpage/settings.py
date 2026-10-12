@@ -67,6 +67,7 @@ class Spot:
     lat: float
     lon: float
     wind_from: tuple[int, int]
+    extra: dict = field(default_factory=dict)      # keys a source of your own reads, such as a site's spot id
 
     def covers(self, deg: float) -> bool:
         a, b = self.wind_from
@@ -106,6 +107,12 @@ def _path(base: Path, v: str | None) -> Path | None:
     return (base / v) if v else None
 
 
+def _spot(d: dict) -> Spot:
+    known = {"label", "name", "lat", "lon", "wind_from"}
+    return Spot(label=d["label"], name=d["name"], lat=d["lat"], lon=d["lon"], wind_from=tuple(d["wind_from"]),
+                extra={k: v for k, v in d.items() if k not in known})
+
+
 def load_settings(path: Path) -> Settings:
     path = Path(path)
     d = tomllib.loads(path.read_text())
@@ -126,6 +133,6 @@ def load_settings(path: Path) -> Settings:
         colours=Colours(**d.get("colours", {})),
         art=Art(_path(base, a.get("banner")), pic(a.get("left")), pic(a.get("right"))),
         wind=WindRule(min_knots=wd.get("min_knots", 15), min_hours=wd.get("min_hours", 2),
-                      spots=[Spot(**{**s, "wind_from": tuple(s["wind_from"])}) for s in wd.get("spots", [])]),
+                      spots=[_spot(s) for s in wd.get("spots", [])]),
         calendars=[Calendar(**c) for c in d.get("calendars", [])],
     )

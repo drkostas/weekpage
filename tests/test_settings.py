@@ -29,3 +29,9 @@ def test_defaults_fill_what_a_file_leaves_out(tmp_path):
     (tmp_path / "s.toml").write_text("")
     s = load_settings(tmp_path / "s.toml")
     assert s.hours == (7, 22) and s.ticks == [] and s.wind.spots == [] and s.art.banner is None
+
+
+def test_a_spot_keeps_keys_of_its_own(tmp_path):
+    (tmp_path / "s.toml").write_text('[[wind.spots]]\nlabel = "N"\nname = "n"\nlat = 1\nlon = 2\n'
+                                     'wind_from = [300, 60]\nsite_id = 153\n')
+    assert load_settings(tmp_path / "s.toml").wind.spots[0].extra == {"site_id": 153}
