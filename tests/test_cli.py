@@ -19,3 +19,10 @@ def test_print_dry_run_shows_the_lp_command(tmp_path):
     pdf.write_bytes(b"%PDF-1.4")
     r = run("print", str(pdf), "--printer", "Office", "--dry-run")
     assert r.returncode == 0 and r.stdout.split() == ["lp", "-d", "Office", "-o", "media=A4", "-o", "fit-to-page", str(pdf)]
+
+
+def test_render_accepts_a_relative_output_path(tmp_path):
+    r = subprocess.run([sys.executable, "-m", "weekpage.cli", "render", str(ROOT / "examples/week.json"),
+                        "-s", str(ROOT / "examples/settings.toml"), "-o", "rel.pdf"], capture_output=True, text=True, cwd=tmp_path)
+    assert r.returncode == 0, r.stderr
+    assert (tmp_path / "rel.pdf").exists()

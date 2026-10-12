@@ -35,7 +35,7 @@ def render_html(week: Week, s: Settings) -> str:
 
 def render_pdf(week: Week, s: Settings, out: Path) -> Path:
     from playwright.sync_api import sync_playwright
-    out = Path(out)
+    out = Path(out).resolve()          # Chromium opens the page by a file:// address, which must be absolute
     html = out.with_suffix(".html")
     html.write_text(render_html(week, s))
     with sync_playwright() as p:
