@@ -1,0 +1,94 @@
+{
+ "items": [
+  {
+   "id": "a1",
+   "status": "confirmed",
+   "summary": "Dentist",
+   "start": {
+    "dateTime": "2026-10-20T12:00:00+01:00"
+   },
+   "end": {
+    "dateTime": "2026-10-20T13:00:00+01:00"
+   }
+  },
+  {
+   "id": "a1",
+   "status": "confirmed",
+   "summary": "Dentist",
+   "start": {
+    "dateTime": "2026-10-20T12:00:00+01:00"
+   },
+   "end": {
+    "dateTime": "2026-10-20T13:00:00+01:00"
+   }
+  },
+  {
+   "id": "b1",
+   "status": "confirmed",
+   "summary": "Team dinner",
+   "start": {
+    "dateTime": "2026-10-21T18:00:00+01:00"
+   },
+   "end": {
+    "dateTime": "2026-10-21T19:00:00+01:00"
+   },
+   "attendees": [
+    {
+     "email": "me@example.org",
+     "self": true,
+     "responseStatus": "declined"
+    },
+    {
+     "email": "a@example.org",
+     "responseStatus": "accepted"
+    }
+   ]
+  },
+  {
+   "id": "c1",
+   "status": "confirmed",
+   "eventType": "outOfOffice",
+   "summary": "Out of office",
+   "start": {
+    "dateTime": "2026-10-22T09:00:00+01:00"
+   },
+   "end": {
+    "dateTime": "2026-10-22T18:00:00+01:00"
+   }
+  },
+  {
+   "id": "d1",
+   "status": "confirmed",
+   "eventType": "birthday",
+   "summary": "Ana's birthday",
+   "start": {
+    "date": "2026-10-23"
+   },
+   "end": {
+    "date": "2026-10-24"
+   }
+  },
+  {
+   "id": "e1",
+   "status": "confirmed",
+   "summary": "Trip to Naxos",
+   "start": {
+    "date": "2026-10-24"
+   },
+   "end": {
+    "date": "2026-10-26"
+   }
+  },
+  {
+   "id": "f1",
+   "status": "cancelled",
+   "summary": "Old plan",
+   "start": {
+    "dateTime": "2026-10-19T10:00:00+01:00"
+   },
+   "end": {
+    "dateTime": "2026-10-19T11:00:00+01:00"
+   }
+  }
+ ]
+}

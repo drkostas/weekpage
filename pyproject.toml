@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "weekpage"
-version = "0.1.0"
+version = "0.2.0"
 description = "A printable weekly planner page, filled in from your calendars and the wind forecast"
 readme = "README.md"
 requires-python = ">=3.11"
