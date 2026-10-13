@@ -7,7 +7,7 @@ core = [11, 17]                    # darker band
 flex = [[9, 11], [17, 18]]         # lighter band
 
 [walks]
-label = "Walk"
+label = "Maggy"
 count = 2
 icon = "paw"
 
@@ -39,9 +39,9 @@ work_core = "#dcebf2"
 work_flex = "#edf5f8"
 
 [art]                               # every picture is optional, paths are relative to this file
-banner = ""
-left = { image = "", caption = "" }
-right = { image = "", caption = "" }
+banner = "art/bay.png"
+left = { image = "art/maggy.png", caption = "Maggy" }
+right = { image = "art/runners.png", caption = "run club of two" }
 
 [wind]
 min_knots = 15                      # kiteable: at least this strength
