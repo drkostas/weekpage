@@ -1,3 +1,4 @@
+from dataclasses import replace
 from pathlib import Path
 
 import pymupdf as fitz
@@ -6,7 +7,7 @@ from pypdf import PdfReader
 
 from weekpage.model import load_week
 from weekpage.render import render_html, render_pdf
-from weekpage.settings import load_settings
+from weekpage.settings import Art, load_settings
 
 ROOT = Path(__file__).parents[1]
 S = load_settings(ROOT / "examples" / "settings.toml")
@@ -38,10 +39,13 @@ def test_a_holiday_does_not_move_the_hour_rows(tmp_path):
     assert html.index('class="rows"') < html.index('class="off"')     # the label sits inside the rows, positioned
 
 
-def test_text_is_vector_not_a_picture(tmp_path):
+def test_text_is_vector_and_the_only_pictures_are_the_art(tmp_path):
     doc = fitz.open(render_pdf(load_week(WEEKS / "busy.json"), S, tmp_path / "b.pdf"))
-    assert doc[0].get_images() == []          # the example settings carry no pictures
+    assert len(doc[0].get_images()) == 3      # the banner and the two corner pictures
     assert len(doc[0].get_fonts()) >= 2       # the display serif and the mono
+    plain = replace(S, art=Art())
+    doc = fitz.open(render_pdf(load_week(WEEKS / "busy.json"), plain, tmp_path / "p.pdf"))
+    assert doc[0].get_images() == []          # without art the whole page is vector
 
 
 @pytest.mark.parametrize("name", ["empty", "busy", "holiday", "full_hour"])
