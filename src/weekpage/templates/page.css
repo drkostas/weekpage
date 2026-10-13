@@ -30,17 +30,23 @@ svg.i.i-fill { fill: currentColor; stroke: none }
 .wind .bars span { display: block; width: 2.9mm; border: 0.3mm solid var(--bar); border-radius: 0.4mm; background: #fff; position: relative }
 .wind .bars span.on { background: var(--bar) }
 .wind .bars i { position: absolute; top: 100%; left: -0.5mm; font: normal 2.1mm/1.4 "Mono"; color: #222 }
-.wind .compass { flex: none; margin-left: auto; align-self: flex-start; margin-top: -0.4mm; width: 7mm; height: 7mm; border-radius: 50%; border: 0.3mm solid #1f6e8d; overflow: hidden;
-                 display: grid; grid-template-rows: 1fr 1fr; font-size: 2.4mm; text-align: center; line-height: 3.5mm }
+.wind .compass { flex: none; margin-left: auto; align-self: flex-start; margin-top: -0.4mm; width: 7mm; height: 7mm; border-radius: 50%; border: 0.3mm solid #1f6e8d; overflow: hidden; position: relative;
+                 display: grid; grid-template-rows: 1fr 1fr; font-size: 2.2mm; text-align: center; line-height: 3mm }
+.wind .compass b:first-child { align-self: start }
+.wind .compass b + b { align-self: end }
+.wind .compass .dir { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none }
+.wind .compass .dir svg { width: 3.7mm; height: 3.7mm; fill: #fff; stroke: #15364a; stroke-width: 1.4 }
 .wind .compass b { font-weight: 400; color: #1f6e8d }
 .wind .compass b + b { background: #f7dccd; color: #c2502b }
 .wind .compass b.on { background: #1f6e8d; color: #fff }
 .wind .compass b + b.on { background: #c2502b; color: #fff }
-.wind .sky { display: flex; justify-content: space-between; margin-top: 5mm }
-.wind .sky span { width: 6.6mm; height: 5mm; border-radius: 1mm; border: 0.25mm solid #b7cfdb; background: #fff;
+.wind .sky { display: flex; align-items: center; gap: 0.7mm; margin-top: 5mm }
+.wind .sky span { width: 5.4mm; height: 5mm; border-radius: 1mm; border: 0.25mm solid #b7cfdb; background: #fff;
                   display: grid; place-items: center; font-size: 4.2mm; color: #3d4950 }
 .wind .sky span.sun { color: #e39a14 }
 .wind .sky span.on { outline: 0.5mm solid var(--day) }
+.wind .sky .temp { width: auto; height: auto; border: none; background: none; margin-left: auto;
+                   font: normal 2.8mm/1 "Mono"; color: #c2502b }
 .wind.kiteable { box-shadow: inset 0 0 0 0.5mm #3f8f6a }
 .rows { margin-top: 1.7mm; border-top: 0.25mm solid #d9d6cf }
 .row { height: var(--hour); border-bottom: 0.2mm solid #e4e1da; font-size: 2.1mm; line-height: 2.5mm; padding: 0.1mm 1mm; overflow: hidden }

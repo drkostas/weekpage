@@ -34,6 +34,8 @@ class Wind:
     kiteable: bool
     sky: str           # sun | cloud | drizzle | rain
     source: str
+    temp: int | None = None   # the day's high in degrees Celsius, when the source has it
+    deg: int | None = None    # the wind's bearing (where it comes from) at the day's strongest hour
 
 
 @dataclass
