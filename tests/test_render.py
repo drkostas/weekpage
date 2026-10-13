@@ -58,6 +58,18 @@ def test_looks_like_the_approved_render(tmp_path, name):
     assert diff < 0.01, f"{name} differs from its golden image in {diff:.1%} of the bytes"
 
 
+def test_temperature_and_wind_arrow_are_drawn():
+    from datetime import date
+    from weekpage.model import Week, Wind
+    w = Week.empty(date(2026, 10, 19))
+    w.days[0].wind = Wind(knots=22, side="N", kiteable=True, sky="sun", temp=24, deg=45, source="forecast")
+    w.days[1].wind = Wind(knots=10, side="S", kiteable=False, sky="cloud", temp=None, deg=None, source="forecast")
+    html = render_html(w, S)
+    assert "24&deg;" in html                               # the day's temperature
+    assert 'class="dir"' in html and "rotate(225deg)" in html   # the arrow, rotated to deg + 180
+    assert html.count("rotate(") == 1                      # the day with no bearing draws no arrow
+
+
 def test_greek_and_cyrillic_use_a_mono_that_has_them(tmp_path):
     from datetime import date
     from weekpage.model import Item, Week

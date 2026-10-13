@@ -22,9 +22,9 @@
     <div class="top">
       <span class="kite">{{ icon('kite') }}</span>
       <span class="bars">{% for k, h, c in [(15, 1.0, "#9cc3d8"), (20, 1.85, "#66a9c4"), (25, 2.7, "#3a7ba1"), (30, 3.55, "#245b7b"), (35, 4.4, "#163c52")] %}<span style="height: {{ h }}mm; --bar: {{ c }}" class="{% if w and w.knots >= k %}on{% endif %}"><i>{{ k }}{% if k == 35 %}+{% endif %}</i></span>{% endfor %}</span>
-      <span class="compass">{% for sp in (s.wind.spots or [{'label': 'N'}, {'label': 'S'}])[:2] %}<b class="{% if w and w.side == sp.label %}on{% endif %}">{{ sp.label }}</b>{% endfor %}</span>
+      <span class="compass">{% for sp in (s.wind.spots or [{'label': 'N'}, {'label': 'S'}])[:2] %}<b class="{% if w and w.side == sp.label %}on{% endif %}">{{ sp.label }}</b>{% endfor %}{% if w and w.deg is not none %}<i class="dir" style="transform: rotate({{ w.deg + 180 }}deg)">{{ icon('arrow') }}</i>{% endif %}</span>
     </div>
-    <div class="sky">{% for k in ['sun', 'cloud', 'drizzle', 'rain'] %}<span class="{{ k }}{% if w and w.sky == k %} on{% endif %}">{{ icon(k) }}</span>{% endfor %}</div>
+    <div class="sky">{% for k in ['sun', 'cloud', 'drizzle', 'rain'] %}<span class="{{ k }}{% if w and w.sky == k %} on{% endif %}">{{ icon(k) }}</span>{% endfor %}{% if w and w.temp is not none %}<span class="temp">{{ w.temp }}&deg;</span>{% endif %}</div>
   </div>
   <div class="rows">
     {% if day.off %}<div class="off">{{ day.off }}</div>{% endif %}

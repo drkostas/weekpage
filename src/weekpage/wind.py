@@ -17,6 +17,7 @@ class Sample:
     knots: float
     deg: float
     sky: str
+    temp: float | None = None       # air temperature in degrees Celsius, when the source has it
 
 
 def summarise_day(by_spot: dict[str, list[Sample]], rule: WindRule, sunrise: time, sunset: time,
@@ -40,4 +41,8 @@ def summarise_day(by_spot: dict[str, list[Sample]], rule: WindRule, sunrise: tim
         kiteable = False
     skies = Counter(x.sky for x in light[label])
     sky = max(skies, key=lambda s: (skies[s], WETNESS.get(s, 0)))
-    return Wind(knots=round(peak), side=label, kiteable=kiteable, sky=sky, source=source)
+    kiteable = kiteable and sky not in ("rain", "drizzle")   # no outline on a wet day, however windy
+    temps = [x.temp for v in light.values() for x in v if x.temp is not None]
+    temp = round(max(temps)) if temps else None       # the day's high, in daylight
+    deg = round(max(light[label], key=lambda x: x.knots).deg)   # bearing at the strongest hour
+    return Wind(knots=round(peak), side=label, kiteable=kiteable, sky=sky, temp=temp, deg=deg, source=source)
