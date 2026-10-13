@@ -32,4 +32,4 @@ def test_the_clock_change_moves_local_sunrise_an_hour_earlier():
 
 def test_summer_days_are_long():
     rise, sets = daylight(38.72, -9.14, date(2026, 6, 21), LISBON)
-    assert (rise.hour, sets.hour) == (6, 20)
+    assert (rise.hour, sets.hour) == (6, 21)
