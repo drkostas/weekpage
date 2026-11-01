@@ -97,5 +97,5 @@ def test_notes_no_row_is_left_for_say_so():
 def test_a_long_note_is_whole_on_the_page(tmp_path):
     week = load_week(WEEKS / "empty.json")
     week.days[0].notes[:] = ["Beach house", "Boat at nine, the north pier, then the two lagoons"]
-    text = PdfReader(render_pdf(week, S, tmp_path / "n.pdf")).pages[0].extract_text()
-    assert "pier, then the two lagoons" in text
+    text = PdfReader(render_pdf(week, S, tmp_path / "n.pdf")).pages[0].extract_text().replace(" ", "")
+    assert "pier,thenthetwolagoons" in text      # how a PDF keeps its spaces differs by the fonts it finds
