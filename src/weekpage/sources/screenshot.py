@@ -20,6 +20,7 @@ class Read:
     items: list[tuple[date, Item]] = field(default_factory=list)
     all_day: list[tuple[date, str]] = field(default_factory=list)
     unseen: list[date] = field(default_factory=list)
+    hour_columns: int = 0           # how many columns of hour labels the picture had (two for two time zones)
 
 
 def _hour(text: str) -> float | None:
@@ -34,7 +35,28 @@ def _hour(text: str) -> float | None:
     return h + mins / 60 if h < 24 and (ap or m.group(2)) else None
 
 
-def read_boxes(boxes, monday: date, source: str = "screenshot") -> Read:
+HOUR_COLUMNS = ("left", "right", "lower", "higher")
+
+
+def _hour_axis(found: list[tuple[float, float, float]], hour_column: str) -> tuple[list[tuple[float, float]], int]:
+    """The hour labels that make the time axis, from every hour label seen as (y, hour, x). A picture
+    that shows two time zones has two columns of labels side by side, so the labels are grouped by row
+    and one per row is kept: the leftmost or rightmost column, or the one whose hours are lower (the
+    westward zone) or higher. Returns the axis sorted by y, and how many columns the rows had."""
+    if hour_column not in HOUR_COLUMNS:
+        raise ValueError(f"hour_column must be one of {HOUR_COLUMNS}, not {hour_column!r}")
+    rows: list[list[tuple[float, float, float]]] = []
+    for y, v, x in sorted(found):
+        if rows and abs(y - rows[-1][0][0]) <= 12:
+            rows[-1].append((y, v, x))
+        else:
+            rows.append([(y, v, x)])
+    key = {"left": lambda r: r[2], "right": lambda r: -r[2], "lower": lambda r: r[1], "higher": lambda r: -r[1]}[hour_column]
+    axis = sorted((min(row, key=key)[0], min(row, key=key)[1]) for row in rows)
+    return axis, max((len(row) for row in rows), default=0)
+
+
+def read_boxes(boxes, monday: date, source: str = "screenshot", hour_column: str = "left") -> Read:
     out = Read()
     heads = {}
     for x, y, w, h, t in boxes:
@@ -49,8 +71,9 @@ def read_boxes(boxes, monday: date, source: str = "screenshot") -> Read:
     head_y = max(y for _, y in heads.values()) + 40
     # hour labels sit left of the first column; only whole hours count, so a "now" marker such
     # as 7:14PM is never a label
-    labels = sorted((y + h / 2, v) for x, y, w, h, t in boxes
-                    if x < left + 120 and (v := _hour(t.strip())) is not None and v == int(v))
+    found = [(y + h / 2, v, x) for x, y, w, h, t in boxes
+             if x < left + 120 and (v := _hour(t.strip())) is not None and v == int(v)]
+    labels, out.hour_columns = _hour_axis(found, hour_column)
     if len(labels) < 2:
         return out
     first_y = labels[0][0]
@@ -114,13 +137,15 @@ class ScreenshotSource:
     `keep_all_day` is set, because on a shared work calendar they are usually other people's."""
     name = "screenshot"
 
-    def __init__(self, path: Path, keep_all_day: bool = False, source: str = "screenshot"):
+    def __init__(self, path: Path, keep_all_day: bool = False, source: str = "screenshot",
+                 hour_column: str = "left"):
         self.path, self.keep_all_day, self.source = Path(path), keep_all_day, source
+        self.hour_column = hour_column          # which hour column is the axis when the picture shows two zones
         self.last: Read | None = None
 
     def fill(self, week, settings) -> list[str]:
         try:
-            r = read_boxes(ocr(self.path), week.monday, self.source)
+            r = read_boxes(ocr(self.path), week.monday, self.source, hour_column=self.hour_column)
         except ImportError:
             return ["reading a screenshot needs macOS (its built-in text recognition)"]
         self.last = r
