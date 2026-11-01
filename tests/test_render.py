@@ -6,7 +6,7 @@ import pytest
 from pypdf import PdfReader
 
 from weekpage.model import load_week
-from weekpage.render import render_html, render_pdf
+from weekpage.render import note_rows, render_html, render_pdf
 from weekpage.settings import Art, load_settings
 
 ROOT = Path(__file__).parents[1]
@@ -79,3 +79,23 @@ def test_greek_and_cyrillic_use_a_mono_that_has_them(tmp_path):
     doc = fitz.open(render_pdf(w, S, tmp_path / "g.pdf"))
     names = [f[3] for f in doc[0].get_fonts()]
     assert any("FiraMono" in n for n in names) and not any("Times" in n for n in names)
+
+
+def test_a_long_note_goes_on_over_the_next_row_at_a_word():
+    assert note_rows(["Beach house", "Boat at nine, the north pier, then the two lagoons"]) == [
+        "Beach house", "Boat at nine, the north", "pier, then the two lagoons"]
+    assert note_rows(["short"]) == ["short", "", ""] and note_rows([]) == ["", "", ""]
+    assert all(len(r) <= 26 for r in note_rows(["x" * 60])), "a word longer than a row breaks and stays on the rows"
+
+
+def test_notes_no_row_is_left_for_say_so():
+    got = note_rows(["one", "two", "three", "four"])
+    assert got == ["one", "two", "three\u2026"], "the page shows that something is missing"
+    assert len(note_rows(["word " * 40])) == 3 and note_rows(["word " * 40])[2].endswith("\u2026")
+
+
+def test_a_long_note_is_whole_on_the_page():
+    week = load_week(WEEKS / "empty.json")
+    week.days[0].notes[:] = ["Beach house", "Boat at nine, the north pier, then the two lagoons"]
+    html = render_html(week, S)
+    assert '<div class="ln">Boat at nine, the north</div><div class="ln">pier, then the two lagoons</div>' in html

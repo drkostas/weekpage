@@ -33,7 +33,7 @@
       {% for it in r.shown %}<div class="it"><b>{{ it.start }}</b> {{ it.title }}</div>{% endfor %}
     </div>{% endfor %}
   </div>
-  <div class="notes">NOTES{% for n in (day.notes + ['', '', ''])[:3] %}<div class="ln">{{ n }}</div>{% endfor %}</div>
+  <div class="notes">NOTES{% for n in note_rows(day.notes) %}<div class="ln">{{ n }}</div>{% endfor %}</div>
   {% if s.walks.count %}<div class="walks"><span style="color:#9a5a22">{{ icon(s.walks.icon) }}</span> {{ s.walks.label }}{% for _ in range(s.walks.count) %}<span class="box"></span>{% endfor %}</div>{% endif %}
   <div class="ticks">{% for t in s.ticks %}<span style="color:{{ t.colour }}">{{ icon(t.icon) }}<span class="box"></span></span>{% endfor %}</div>
 </div>{% endfor %}

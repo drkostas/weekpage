@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import base64
 import mimetypes
+import textwrap
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -16,6 +17,19 @@ TEMPLATES = HERE / "templates"
 FONTS = HERE / "fonts"
 
 
+NOTE_ROWS, NOTE_WIDTH = 3, 26  # the ruled rows under a day, and the characters a row of them holds
+
+
+def note_rows(notes: list[str], rows: int = NOTE_ROWS, width: int = NOTE_WIDTH) -> list[str]:
+    """A day's notes on its ruled rows. A row cuts off what does not fit, so a long note goes on over the next
+    row, at a word. What no row is left for ends the last row in an ellipsis, so the page says something is missing."""
+    out = [line for n in notes for line in textwrap.wrap(n, width) or [""]]
+    if len(out) > rows:
+        out = out[:rows]
+        out[-1] = out[-1][:width - 1].rstrip() + "\u2026"
+    return out + [""] * (rows - len(out))
+
+
 def _data_uri(p: Path | None) -> str | None:
     if not p:
         return None
@@ -25,6 +39,7 @@ def _data_uri(p: Path | None) -> str | None:
 
 def render_html(week: Week, s: Settings) -> str:
     env = Environment(loader=FileSystemLoader(TEMPLATES), autoescape=select_autoescape(["html", "j2"]))
+    env.globals["note_rows"] = note_rows
     css = env.get_template("page.css").render(fonts=FONTS.as_uri())
     return env.get_template("page.html.j2").render(
         week=week, s=s, css=css, icons=env.get_template("icons.svg.j2").render(),
