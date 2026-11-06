@@ -116,7 +116,7 @@ def _note_widths(tmp_path, monkeypatch, rows):
         browser = p.chromium.launch()
         page = browser.new_page()
         page.goto(html.as_uri())
-        page.evaluate("document.fonts.ready.then(() => true)")
+        page.evaluate(render.LOAD_FONTS)
         got = page.evaluate("""() => [...document.querySelectorAll('.notes')].map(n => {
             const ln = n.querySelector('.ln'); return [ln.textContent, ln.scrollWidth, ln.clientWidth] })""")
         browser.close()
