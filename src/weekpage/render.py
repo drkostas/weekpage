@@ -17,7 +17,8 @@ TEMPLATES = HERE / "templates"
 FONTS = HERE / "fonts"
 
 
-NOTE_ROWS, NOTE_WIDTH = 3, 26  # the ruled rows under a day, and the characters a row of them holds
+NOTE_ROWS, NOTE_WIDTH = 3, 25  # the ruled rows under a day, and the characters a row of them holds
+# (as Chromium draws them: test_a_full_note_row_fits_its_box measures it)
 
 
 def note_rows(notes: list[str], rows: int = NOTE_ROWS, width: int = NOTE_WIDTH) -> list[str]:
@@ -28,6 +29,11 @@ def note_rows(notes: list[str], rows: int = NOTE_ROWS, width: int = NOTE_WIDTH) 
         out = out[:rows]
         out[-1] = out[-1][:width - 1].rstrip() + "\u2026"
     return out + [""] * (rows - len(out))
+
+
+#: every face of the page loaded, including the ones limited to a range of characters, which Chromium would
+#: otherwise load only after first use, and so after the PDF is made or a row is measured
+LOAD_FONTS = "Promise.all([...document.fonts].map(f => f.load())).then(() => document.fonts.ready)"
 
 
 def _data_uri(p: Path | None) -> str | None:
@@ -57,9 +63,7 @@ def render_pdf(week: Week, s: Settings, out: Path) -> Path:
         browser = p.chromium.launch()
         page = browser.new_page()
         page.goto(html.as_uri())
-        # every face, including the ones limited to a range of characters, which Chromium would
-        # otherwise load only after first use and so after the PDF is made
-        page.evaluate("Promise.all([...document.fonts].map(f => f.load())).then(() => document.fonts.ready)")
+        page.evaluate(LOAD_FONTS)
         page.pdf(path=str(out), width="297mm", height="210mm", print_background=True,
                  margin={"top": "0", "right": "0", "bottom": "0", "left": "0"}, prefer_css_page_size=True)
         browser.close()

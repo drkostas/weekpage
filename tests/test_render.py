@@ -6,7 +6,7 @@ import pytest
 from pypdf import PdfReader
 
 from weekpage.model import load_week
-from weekpage.render import note_rows, render_html, render_pdf
+from weekpage.render import NOTE_WIDTH, note_rows, render_html, render_pdf
 from weekpage.settings import Art, load_settings
 
 ROOT = Path(__file__).parents[1]
@@ -82,10 +82,10 @@ def test_greek_and_cyrillic_use_a_mono_that_has_them(tmp_path):
 
 
 def test_a_long_note_goes_on_over_the_next_row_at_a_word():
-    assert note_rows(["Beach house", "Boat at nine, the north pier, then the two lagoons"]) == [
-        "Beach house", "Boat at nine, the north", "pier, then the two lagoons"]
+    assert note_rows(["Beach house", "Boat at nine, the north pier, then the lagoons"]) == [
+        "Beach house", "Boat at nine, the north", "pier, then the lagoons"]
     assert note_rows(["short"]) == ["short", "", ""] and note_rows([]) == ["", "", ""]
-    assert all(len(r) <= 26 for r in note_rows(["x" * 60])), "a word longer than a row breaks and stays on the rows"
+    assert all(len(r) <= NOTE_WIDTH for r in note_rows(["x" * 60])), "a word longer than a row breaks and stays on the rows"
 
 
 def test_notes_no_row_is_left_for_say_so():
@@ -96,6 +96,44 @@ def test_notes_no_row_is_left_for_say_so():
 
 def test_a_long_note_is_whole_on_the_page():
     week = load_week(WEEKS / "empty.json")
-    week.days[0].notes[:] = ["Beach house", "Boat at nine, the north pier, then the two lagoons"]
+    week.days[0].notes[:] = ["Beach house", "Boat at nine, the north pier, then the lagoons"]
     html = render_html(week, S)
-    assert '<div class="ln">Boat at nine, the north</div><div class="ln">pier, then the two lagoons</div>' in html
+    assert '<div class="ln">Boat at nine, the north</div><div class="ln">pier, then the lagoons</div>' in html
+
+
+def test_a_full_note_row_fits_its_box(tmp_path):
+    """NOTE_WIDTH is how many characters of the mono fit a note row: the row's width as Chromium lays the
+    page out, against the text's width in the font file the PDF embeds. (On screen, Chromium on Linux
+    rounds each character to a whole pixel, which the printed PDF does not, so the text is measured from
+    the font, not from the screen.)"""
+    from playwright.sync_api import sync_playwright
+    from weekpage.render import FONTS, LOAD_FONTS
+    html = tmp_path / "n.html"
+    html.write_text(render_html(load_week(WEEKS / "empty.json"), S))
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        page.goto(html.as_uri())
+        page.evaluate(LOAD_FONTS)
+        box, size = page.evaluate("""() => { const ln = document.querySelector('.notes .ln');
+            return [ln.clientWidth, parseFloat(getComputedStyle(ln).fontSize)] }""")
+        browser.close()
+    mono = fitz.Font(fontfile=str(FONTS / "IBMPlexMono-Regular.ttf"))
+    full = mono.text_length("W" * NOTE_WIDTH, fontsize=size)
+    over = mono.text_length("W" * (NOTE_WIDTH + 1), fontsize=size)
+    assert full <= box, f"a row of {NOTE_WIDTH} characters is cut: {full:.1f}px of text in a {box}px row"
+    assert over > box, f"a row holds {NOTE_WIDTH + 1} characters ({over:.1f}px in {box}px), so NOTE_WIDTH cuts notes early"
+
+
+def test_a_day_can_have_its_own_work_band():
+    from datetime import date
+    from weekpage.model import Week, from_dict, to_dict
+    from weekpage.settings import Work
+    w = Week.empty(date(2026, 10, 19))
+    w.days[3].work = Work(weekdays=[3], core=(8, 18), flex=[])
+    back = from_dict(to_dict(w))
+    assert back.days[3].work == Work(weekdays=[3], core=(8, 18), flex=[]) and back.days[2].work is None
+    days = render_html(back, S).split('<div class="rows">')[1:]
+    band = lambda day: (day.count('class="row core"'), day.count('class="row flex"'))
+    assert band(days[3]) == (10, 0), f"Thursday has its own band, 08 to 18 and no flex: {band(days[3])}"
+    assert band(days[2]) == (6, 3), f"Wednesday keeps the page's band, 11 to 17 and 3 flex hours: {band(days[2])}"

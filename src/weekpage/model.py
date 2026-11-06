@@ -7,6 +7,8 @@ from dataclasses import asdict, dataclass, field
 from datetime import date, timedelta
 from pathlib import Path
 
+from .settings import Work
+
 HHMM = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
 
 
@@ -45,6 +47,7 @@ class Day:
     off: str | None = None          # a holiday name: no work band that day
     notes: list[str] = field(default_factory=list)
     wind: Wind | None = None
+    work: Work | None = None        # this day's own work band, for a day spent in another time zone; None uses the page's
 
 
 @dataclass
@@ -76,11 +79,17 @@ def to_dict(w: Week) -> dict:
     return out
 
 
+def _work(x: dict) -> Work:
+    return Work(weekdays=list(x.get("weekdays", [])), core=tuple(x["core"]) if x.get("core") else None,
+                flex=[tuple(f) for f in x.get("flex", [])])
+
+
 def from_dict(d: dict) -> Week:
     days = [Day(date=date.fromisoformat(x["date"]),
                 items=[Item(**i) for i in x.get("items", [])],
                 off=x.get("off"), notes=list(x.get("notes", [])),
-                wind=Wind(**x["wind"]) if x.get("wind") else None) for x in d["days"]]
+                wind=Wind(**x["wind"]) if x.get("wind") else None,
+                work=_work(x["work"]) if x.get("work") else None) for x in d["days"]]
     return Week(date.fromisoformat(d["monday"]), days, list(d.get("notes", [])))
 
 
