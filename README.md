@@ -70,6 +70,9 @@ Start from [`examples/settings.toml`](examples/settings.toml). Each part is opti
 
 A day in `off` has no work band and shows its name.
 
+In code, a day can also carry its own band. Set `day.work` to a `weekpage.settings.Work` and that
+day's hours are shaded from it instead of `[work]`, for a day spent in another time zone.
+
 ## More sources
 
 - `weekpage.sources.google.GoogleCalendarSource` reads Google Calendar through its API with a

@@ -6,7 +6,7 @@ import pytest
 from pypdf import PdfReader
 
 from weekpage.model import load_week
-from weekpage.render import note_rows, render_html, render_pdf
+from weekpage.render import NOTE_WIDTH, note_rows, render_html, render_pdf
 from weekpage.settings import Art, load_settings
 
 ROOT = Path(__file__).parents[1]
@@ -82,10 +82,10 @@ def test_greek_and_cyrillic_use_a_mono_that_has_them(tmp_path):
 
 
 def test_a_long_note_goes_on_over_the_next_row_at_a_word():
-    assert note_rows(["Beach house", "Boat at nine, the north pier, then the two lagoons"]) == [
-        "Beach house", "Boat at nine, the north", "pier, then the two lagoons"]
+    assert note_rows(["Beach house", "Boat at nine, the north pier, then the lagoons"]) == [
+        "Beach house", "Boat at nine, the north", "pier, then the lagoons"]
     assert note_rows(["short"]) == ["short", "", ""] and note_rows([]) == ["", "", ""]
-    assert all(len(r) <= 26 for r in note_rows(["x" * 60])), "a word longer than a row breaks and stays on the rows"
+    assert all(len(r) <= NOTE_WIDTH for r in note_rows(["x" * 60])), "a word longer than a row breaks and stays on the rows"
 
 
 def test_notes_no_row_is_left_for_say_so():
@@ -96,6 +96,50 @@ def test_notes_no_row_is_left_for_say_so():
 
 def test_a_long_note_is_whole_on_the_page():
     week = load_week(WEEKS / "empty.json")
-    week.days[0].notes[:] = ["Beach house", "Boat at nine, the north pier, then the two lagoons"]
+    week.days[0].notes[:] = ["Beach house", "Boat at nine, the north pier, then the lagoons"]
     html = render_html(week, S)
-    assert '<div class="ln">Boat at nine, the north</div><div class="ln">pier, then the two lagoons</div>' in html
+    assert '<div class="ln">Boat at nine, the north</div><div class="ln">pier, then the lagoons</div>' in html
+
+
+def _note_widths(tmp_path, monkeypatch, rows):
+    """How wide each note row's text is against its box, as Chromium draws the page with its own fonts. The
+    rows are drawn as given: note_rows, which would wrap them, is set aside for this."""
+    from playwright.sync_api import sync_playwright
+    import weekpage.render as render
+    monkeypatch.setattr(render, "note_rows", lambda notes: list(notes) + [""] * (3 - len(notes)))
+    week = load_week(WEEKS / "empty.json")
+    for day, row in zip(week.days, rows):
+        day.notes[:] = [row]
+    html = tmp_path / "n.html"
+    html.write_text(render_html(week, S))
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        page.goto(html.as_uri())
+        page.evaluate("document.fonts.ready.then(() => true)")
+        got = page.evaluate("""() => [...document.querySelectorAll('.notes')].map(n => {
+            const ln = n.querySelector('.ln'); return [ln.textContent, ln.scrollWidth, ln.clientWidth] })""")
+        browser.close()
+    return got[:len(rows)]
+
+
+def test_a_full_note_row_fits_its_box(tmp_path, monkeypatch):
+    full, over = "W" * NOTE_WIDTH, "W" * (NOTE_WIDTH + 1)
+    (t1, used1, box1), (t2, used2, box2) = _note_widths(tmp_path, monkeypatch, [full, over])
+    assert (t1, t2) == (full, over), "the rows are drawn as given"
+    assert used1 <= box1, f"a row of {NOTE_WIDTH} characters is cut: {used1}px of text in a {box1}px row"
+    assert used2 > box2, f"a row holds more than {NOTE_WIDTH} characters, so NOTE_WIDTH cuts notes too early"
+
+
+def test_a_day_can_have_its_own_work_band():
+    from datetime import date
+    from weekpage.model import Week, from_dict, to_dict
+    from weekpage.settings import Work
+    w = Week.empty(date(2026, 10, 19))
+    w.days[3].work = Work(weekdays=[3], core=(8, 18), flex=[])
+    back = from_dict(to_dict(w))
+    assert back.days[3].work == Work(weekdays=[3], core=(8, 18), flex=[]) and back.days[2].work is None
+    days = render_html(back, S).split('<div class="rows">')[1:]
+    band = lambda day: (day.count('class="row core"'), day.count('class="row flex"'))
+    assert band(days[3]) == (10, 0), f"Thursday has its own band, 08 to 18 and no flex: {band(days[3])}"
+    assert band(days[2]) == (6, 3), f"Wednesday keeps the page's band, 11 to 17 and 3 flex hours: {band(days[2])}"

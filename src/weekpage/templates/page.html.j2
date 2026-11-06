@@ -28,7 +28,7 @@
   </div>
   <div class="rows">
     {% if day.off %}<div class="off">{{ day.off }}</div>{% endif %}
-    {% for r in rows[i] %}<div class="row {{ '' if day.off else (s.work.shade(day.date.weekday(), r.hour) or '') }}">
+    {% for r in rows[i] %}<div class="row {{ '' if day.off else ((day.work or s.work).shade(day.date.weekday(), r.hour) or '') }}">
       {% if r.more %}<span class="more">+{{ r.more }}</span>{% endif %}
       {% for it in r.shown %}<div class="it"><b>{{ it.start }}</b> {{ it.title }}</div>{% endfor %}
     </div>{% endfor %}

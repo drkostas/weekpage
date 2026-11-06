@@ -17,7 +17,8 @@ TEMPLATES = HERE / "templates"
 FONTS = HERE / "fonts"
 
 
-NOTE_ROWS, NOTE_WIDTH = 3, 26  # the ruled rows under a day, and the characters a row of them holds
+NOTE_ROWS, NOTE_WIDTH = 3, 25  # the ruled rows under a day, and the characters a row of them holds
+# (as Chromium draws them: test_a_full_note_row_fits_its_box measures it)
 
 
 def note_rows(notes: list[str], rows: int = NOTE_ROWS, width: int = NOTE_WIDTH) -> list[str]:
