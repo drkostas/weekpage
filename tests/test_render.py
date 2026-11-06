@@ -101,34 +101,28 @@ def test_a_long_note_is_whole_on_the_page():
     assert '<div class="ln">Boat at nine, the north</div><div class="ln">pier, then the lagoons</div>' in html
 
 
-def _note_widths(tmp_path, monkeypatch, rows):
-    """How wide each note row's text is against its box, as Chromium draws the page with its own fonts. The
-    rows are drawn as given: note_rows, which would wrap them, is set aside for this."""
+def test_a_full_note_row_fits_its_box(tmp_path):
+    """NOTE_WIDTH is how many characters of the mono fit a note row: the row's width as Chromium lays the
+    page out, against the text's width in the font file the PDF embeds. (On screen, Chromium on Linux
+    rounds each character to a whole pixel, which the printed PDF does not, so the text is measured from
+    the font, not from the screen.)"""
     from playwright.sync_api import sync_playwright
-    import weekpage.render as render
-    monkeypatch.setattr(render, "note_rows", lambda notes: list(notes) + [""] * (3 - len(notes)))
-    week = load_week(WEEKS / "empty.json")
-    for day, row in zip(week.days, rows):
-        day.notes[:] = [row]
+    from weekpage.render import FONTS, LOAD_FONTS
     html = tmp_path / "n.html"
-    html.write_text(render_html(week, S))
+    html.write_text(render_html(load_week(WEEKS / "empty.json"), S))
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
         page.goto(html.as_uri())
-        page.evaluate(render.LOAD_FONTS)
-        got = page.evaluate("""() => [...document.querySelectorAll('.notes')].map(n => {
-            const ln = n.querySelector('.ln'); return [ln.textContent, ln.scrollWidth, ln.clientWidth] })""")
+        page.evaluate(LOAD_FONTS)
+        box, size = page.evaluate("""() => { const ln = document.querySelector('.notes .ln');
+            return [ln.clientWidth, parseFloat(getComputedStyle(ln).fontSize)] }""")
         browser.close()
-    return got[:len(rows)]
-
-
-def test_a_full_note_row_fits_its_box(tmp_path, monkeypatch):
-    full, over = "W" * NOTE_WIDTH, "W" * (NOTE_WIDTH + 1)
-    (t1, used1, box1), (t2, used2, box2) = _note_widths(tmp_path, monkeypatch, [full, over])
-    assert (t1, t2) == (full, over), "the rows are drawn as given"
-    assert used1 <= box1, f"a row of {NOTE_WIDTH} characters is cut: {used1}px of text in a {box1}px row"
-    assert used2 > box2, f"a row holds more than {NOTE_WIDTH} characters, so NOTE_WIDTH cuts notes too early"
+    mono = fitz.Font(fontfile=str(FONTS / "IBMPlexMono-Regular.ttf"))
+    full = mono.text_length("W" * NOTE_WIDTH, fontsize=size)
+    over = mono.text_length("W" * (NOTE_WIDTH + 1), fontsize=size)
+    assert full <= box, f"a row of {NOTE_WIDTH} characters is cut: {full:.1f}px of text in a {box}px row"
+    assert over > box, f"a row holds {NOTE_WIDTH + 1} characters ({over:.1f}px in {box}px), so NOTE_WIDTH cuts notes early"
 
 
 def test_a_day_can_have_its_own_work_band():
