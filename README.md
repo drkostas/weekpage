@@ -84,6 +84,11 @@ day's hours are shaded from it instead of `[work]`, for a day spent in another t
   its position. Titles cut off in the picture keep their `...`, and days the picture does not show
   are returned as warnings. It uses the text recognition built into macOS, which is installed with the package on a Mac
   and is not available elsewhere.
+- `weekpage.sources.windguru.WindguruSource` reads the Windguru forecast for spots you give by their Windguru
+  id, through the two JSON requests a spot page makes (no account or API key). It sets the wind box
+  and the temperature like the included forecast, and takes a `tz` for the zone of your days and an
+  optional `spot_of(date)` that names the one spot a day is read from. Keep its requests few, once a
+  week per spot is enough.
 - `weekpage.lines.parse_line("Wed 18:00-19:00 Physio", monday)` turns one line of text into an item.
 
 ## Writing a source
