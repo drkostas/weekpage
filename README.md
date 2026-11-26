@@ -78,7 +78,10 @@ day's hours are shaded from it instead of `[work]`, for a day spent in another t
 - `weekpage.sources.google.GoogleCalendarSource` reads Google Calendar through its API with a
   refresh token from your own OAuth client (`refresh_token_getter(client_id, client_secret,
   refresh_token)`). It sees more than an `.ics` export can, so it also leaves out out-of-office,
-  working-location and birthday events, and events you declined.
+  working-location and birthday events, and events you declined. `answers()` says whether the
+  calendar can be read now, as True, False when Google refuses the credentials, or None when it
+  could not be asked (no network, a timeout), so a tool that asks you to sign in again acts only
+  on False.
 - `weekpage.sources.screenshot.ScreenshotSource` reads a screenshot of a calendar's week view, for
   a calendar you cannot connect. It finds the day headers and hour labels and places each event by
   its position. Titles cut off in the picture keep their `...`, and days the picture does not show
