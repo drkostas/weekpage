@@ -43,6 +43,25 @@ class GoogleCalendarSource:
         self.name, self.cal, self.token, self.fetch, self.tz = f"calendar:{name}", calendar_id, token, fetch, tz
         self.label = name
 
+    def answers(self, day: date | None = None) -> bool | None:
+        """Whether the calendar can be read now, asking for one day of events (today by default).
+
+        True when it answers. False when Google refuses the credentials, for example a refresh token
+        that was revoked or a calendar the account cannot see. None when it could not be asked at all,
+        for example no network, a name that does not resolve, a timeout or a server error. fill()
+        turns all of these into one warning, so a caller that acts on a refusal (asking the user to
+        sign in again) should read this instead and leave None alone."""
+        start = datetime.combine(day or datetime.now(self.tz).date(), datetime.min.time(), self.tz)
+        if start.tzinfo is None:
+            start = start.astimezone()
+        try:
+            self.fetch(self.cal, self.token(), start.isoformat(), (start + timedelta(1)).isoformat())
+        except PermissionError:
+            return False
+        except Exception:
+            return None
+        return True
+
     def fill(self, week: Week, settings: Settings) -> list[str]:
         start = datetime.combine(week.monday, datetime.min.time()).astimezone(self.tz)
         try:
